@@ -7,10 +7,38 @@
 .cell {
     background-color: #f1f1f1;
     border: 1px solid black;
+    text-align: center;
+    padding-top: 5px;
+    width: 30px;
+    height: 25px;
+}
+
+.altruistCell {
+    background-color: lightblue;
+}
+.egoistCell {
+    background-color: lightsalmon;
+}
+.hooliganCell {
+    background-color: lightgreen;
+}
+
+#buttonContainer {
+    border: 1px solid black;
+    display: grid;
+    grid-template-columns: 100px 100px 100px;
+    width: 300px;
+    margin:auto;
     padding: 10px;
-    font-size: 30px;
+    justify-content: center;
     text-align: center;
 }
-.cell.active {
-    background-color: #007acc;
+.agentButton {
+    border: 1px solid black;
+    padding: 3px;
+    margin-right:15px;
+    margin-left:15px;
+}
+.agentButton:hover {
+    cursor: pointer;
 }

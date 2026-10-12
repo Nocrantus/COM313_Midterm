@@ -8,6 +8,39 @@ let gameArray = [
 //Initialize grid container
 let gridContainer = document.getElementById('gridContainer');
 
+//Initialize the buttons
+let altruistButton = document.getElementById("altruistButton");
+let egoistButton = document.getElementById("egoistButton");
+let hooliganButton = document.getElementById("hooliganButton");
+altruistButton.style.setProperty("background-color","#d3d3d3");
+egoistButton.style.setProperty("background-color","#FFFFFF");
+hooliganButton.style.setProperty("background-color","#FFFFFF");
+
+//Global variable for determining which agent to update the cell with
+let updateID = "A";
+
+altruistButton.addEventListener("click", () => {
+    console.log("Altruist mode engaged");
+    updateID = "A";
+    altruistButton.style.setProperty("background-color","#d3d3d3");
+    egoistButton.style.setProperty("background-color","#FFFFFF");
+    hooliganButton.style.setProperty("background-color","#FFFFFF");
+});
+egoistButton.addEventListener("click", () => {
+    console.log("Egoist mode engaged");
+    updateID = "E";
+    altruistButton.style.setProperty("background-color","#FFFFFF");
+    egoistButton.style.setProperty("background-color","#d3d3d3");
+    hooliganButton.style.setProperty("background-color","#FFFFFF");
+});
+hooliganButton.addEventListener("click", () => {
+    console.log("Hooligan mode engaged");
+    updateID = "H";
+    altruistButton.style.setProperty("background-color","#FFFFFF");
+    egoistButton.style.setProperty("background-color","#FFFFFF");
+    hooliganButton.style.setProperty("background-color","#d3d3d3");
+});
+
 //Initialize the row slider
 //var rowSliderValue is the text object that says what the value of the row slider is
 //var rowSlider is the document object of the slider
@@ -58,21 +91,44 @@ function updateGridSize(){
         cell.classList.add('cell');
 
         // Anything interactive goes here:
+
         cell.addEventListener("mouseover", (e) => { //For dragging functionality
             e.preventDefault(); //prevents browser from thinking we're dragging the cell around
-            console.log("entered ${i}");
+            console.log("entered a cell");
             if (mouseDown){
-                cell.classList.add('active');
-                console.log(`Cell ${i} clicked`);
+                updateCell(cell);
+                console.log(`Cell clicked`);
             }
         });
         cell.addEventListener("mousedown", (e) => { //For clicking functionality
             e.preventDefault(); //prevents browser from thinking we're dragging the cell around
-            cell.classList.add('active');
-            console.log(`Cell ${i} clicked`);
+            updateCell(cell);
+            console.log(`Cell clicked`);
         })
 
         gridContainer.appendChild(cell);
+    }
+}
+
+//according to the variable updateID, update the cell that's being clicked on
+function updateCell(cell) {
+    if (updateID.equals("A")) {
+        cell.classList.add("altruistCell");
+        cell.classList.remove("egoistCell");
+        cell.classList.remove("hooliganCell");
+        cell.innerHTML = "<span>A</span>";
+    }
+    if (updateID.equals("E")) {
+        cell.classList.add("egoistCell");
+        cell.classList.remove("altruistCell");
+        cell.classList.remove("hooliganCell");
+        cell.innerHTML = "<span>E</span>";
+    }
+    if (updateID.equals("E")) {
+        cell.classList.add("hooliganCell");
+        cell.classList.remove("altruistCell");
+        cell.classList.remove("egoistCell");
+        cell.innerHTML = "<span>H</span>";
     }
 }
 
