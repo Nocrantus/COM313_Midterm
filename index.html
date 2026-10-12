@@ -7,7 +7,35 @@
 
     </head>
     <body>
-    <div id="tableContainer"></div>
+    <div id="gridContainer"></div>
+
+    <div>
+        <input
+                type="range"
+                id="rowSlider"
+                name="rowSlider"
+                value="3"
+                min="3"
+                max="20"
+                step="1"
+        />
+        <label for="rowSlider">Rows</label>
+        <p>Rows: <span id="rowValue"></span></p>
+    </div>
+
+    <div>
+        <input
+                type="range"
+                id="colSlider"
+                name="colSlider"
+                value="3"
+                min="3"
+                max="20"
+                step="1"
+        />
+        <label for="colSlider">Columns</label>
+        <p>Columns: <span id="colValue"></span></p>
+    </div>
         <script src="script.js"></script>
     </body>
 </html>
