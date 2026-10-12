@@ -5,6 +5,8 @@ let gameArray = [
     ["1","2","3"],
 ]; //unused at the moment, will be used for storing the state of the game
 
+//Initialize grid container
+let gridContainer = document.getElementById('gridContainer');
 
 //Initialize the row slider
 //var rowSliderValue is the text object that says what the value of the row slider is
@@ -32,8 +34,18 @@ colSlider.addEventListener("input", (event) => {
     updateGridSize();
 });
 
+//Event listener for when the mouse is down or not
+let mouseDown = false;
+gridContainer.addEventListener("mousedown", (e) => {
+    e.preventDefault(); //prevents browser from thinking we're dragging the cell around
+    mouseDown = true;
+});
+gridContainer.addEventListener("mouseup", (e) => {
+    e.preventDefault(); //prevents browser from thinking we're dragging the cell around
+    mouseDown = false;
+});
+
 //This function updates the size of the grid every time it is called
-let gridContainer = document.getElementById('gridContainer');
 function updateGridSize(){
     gridContainer.innerHTML = ''; //reset the grid
     let gridTemplateRowsString = "repeat(" + rowSlider.value + ", 1fr)";
@@ -46,10 +58,19 @@ function updateGridSize(){
         cell.classList.add('cell');
 
         // Anything interactive goes here:
-        cell.addEventListener('click', () => {
-            cell.classList.toggle('active');
-            console.log(`Cell ${i} clicked`);
+        cell.addEventListener("mouseover", (e) => { //For dragging functionality
+            e.preventDefault(); //prevents browser from thinking we're dragging the cell around
+            console.log("entered ${i}");
+            if (mouseDown){
+                cell.classList.add('active');
+                console.log(`Cell ${i} clicked`);
+            }
         });
+        cell.addEventListener("mousedown", (e) => { //For clicking functionality
+            e.preventDefault(); //prevents browser from thinking we're dragging the cell around
+            cell.classList.add('active');
+            console.log(`Cell ${i} clicked`);
+        })
 
         gridContainer.appendChild(cell);
     }
