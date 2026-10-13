@@ -112,19 +112,19 @@ function updateGridSize(){
 
 //according to the variable updateID, update the cell that's being clicked on
 function updateCell(cell) {
-    if (updateID.equals("A")) {
+    if (updateID == "A") {
         cell.classList.add("altruistCell");
         cell.classList.remove("egoistCell");
         cell.classList.remove("hooliganCell");
         cell.innerHTML = "<span>A</span>";
     }
-    if (updateID.equals("E")) {
+    if (updateID == "E") {
         cell.classList.add("egoistCell");
         cell.classList.remove("altruistCell");
         cell.classList.remove("hooliganCell");
         cell.innerHTML = "<span>E</span>";
     }
-    if (updateID.equals("E")) {
+    if (updateID == "E") {
         cell.classList.add("hooliganCell");
         cell.classList.remove("altruistCell");
         cell.classList.remove("egoistCell");
