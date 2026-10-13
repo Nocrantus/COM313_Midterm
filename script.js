@@ -84,7 +84,7 @@ let resetButton = document.getElementById("resetButton");
 resetButton.addEventListener("click", () => {
     updateGridSize(); //Currently just deletes the grid and re-draws it.
     //When the gameArray is connected to the cells, this won't work.
-    // we'll need a function to clear the gameArray instead
+    // we'll need a function to clear the gameArray instead y
 });
 
 //This function updates the size of the grid every time it is called
