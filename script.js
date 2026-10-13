@@ -1,8 +1,9 @@
+
+
 let gameArray = [
-    ["1","2","3"],
-    ["1","2","3"],
-    ["1","2","3"],
-    ["1","2","3"],
+    ["","",""],
+    ["","",""],
+    ["","",""],
 ]; //unused at the moment, will be used for storing the state of the game
 
 //Initialize grid container
@@ -78,9 +79,18 @@ gridContainer.addEventListener("mouseup", (e) => {
     mouseDown = false;
 });
 
+//Reset button declaration and functionality
+let resetButton = document.getElementById("resetButton");
+resetButton.addEventListener("click", () => {
+    updateGridSize(); //Currently just deletes the grid and re-draws it.
+    //When the gameArray is connected to the cells, this won't work.
+    // we'll need a function to clear the gameArray instead
+});
+
 //This function updates the size of the grid every time it is called
 function updateGridSize(){
     gridContainer.innerHTML = ''; //reset the grid
+    gridContainer.style.setProperty("top", 15*(15-rowSlider.value) + "px");
     let gridTemplateRowsString = "repeat(" + rowSlider.value + ", 1fr)";
     let gridTemplateColsString = "repeat(" + colSlider.value + ", 30px)";
     gridContainer.style.setProperty("grid-template-rows", gridTemplateRowsString); //set row amount
@@ -112,23 +122,23 @@ function updateGridSize(){
 
 //according to the variable updateID, update the cell that's being clicked on
 function updateCell(cell) {
-    if (updateID.equals("A")) {
+    if (updateID === "A") {
         cell.classList.add("altruistCell");
         cell.classList.remove("egoistCell");
         cell.classList.remove("hooliganCell");
-        cell.innerHTML = "<span>A</span>";
+        cell.innerHTML = "<span><strong>A</strong></span>";
     }
-    if (updateID.equals("E")) {
+    if (updateID === "E") {
         cell.classList.add("egoistCell");
         cell.classList.remove("altruistCell");
         cell.classList.remove("hooliganCell");
-        cell.innerHTML = "<span>E</span>";
+        cell.innerHTML = "<span><strong>E</strong></span>";
     }
-    if (updateID.equals("E")) {
+    if (updateID === "H") {
         cell.classList.add("hooliganCell");
         cell.classList.remove("altruistCell");
         cell.classList.remove("egoistCell");
-        cell.innerHTML = "<span>H</span>";
+        cell.innerHTML = "<span><strong>H</strong></span>";
     }
 }
 

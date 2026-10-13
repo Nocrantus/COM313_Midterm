@@ -1,9 +1,14 @@
- #gridContainer {
+body {
+    background-color: #E6DDCC;
+}
+
+#gridContainer {
      display: grid;
-     background-color: dodgerblue;
      justify-content: center;
-     padding: 10px;
+    position: relative;
+    margin: auto;
  }
+
 .cell {
     background-color: #f1f1f1;
     border: 1px solid black;
@@ -11,6 +16,30 @@
     padding-top: 5px;
     width: 30px;
     height: 25px;
+}
+
+.cell:hover {
+    cursor: default;
+}
+
+#settingsContainer {
+    position: absolute;
+    bottom: 10px;
+    left: 1%;
+    width: 98%;
+    border: 1px solid black;
+}
+
+#sliderContainer {
+    position: relative;
+    border: 3px solid black;
+    width: 220px;
+}
+
+.sliderDiv {
+    position:relative;
+    left:5px;
+    top:5px;
 }
 
 .altruistCell {
@@ -24,11 +53,11 @@
 }
 
 #buttonContainer {
-    border: 1px solid black;
+    position: relative;
+    border: 3px solid black;
     display: grid;
     grid-template-columns: 100px 100px 100px;
     width: 300px;
-    margin:auto;
     padding: 10px;
     justify-content: center;
     text-align: center;
@@ -40,5 +69,21 @@
     margin-left:15px;
 }
 .agentButton:hover {
+    cursor: pointer;
+}
+
+#resetButton {
+    position: absolute;
+    border: 3px solid black;
+    width: 100px;
+    padding: 10px;
+    background-color: lightcoral;
+    justify-content: center;
+    text-align: center;
+    left: 50%;
+    top:0;
+    transform: translate(-50%);
+}
+#resetButton:hover {
     cursor: pointer;
 }

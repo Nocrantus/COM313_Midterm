@@ -9,45 +9,55 @@
     <body>
     <div id="gridContainer"></div>
 
-    <div>
-        <input
-                type="range"
-                id="rowSlider"
-                name="rowSlider"
-                value="10"
-                min="3"
-                max="20"
-                step="1"
-        />
-        <label for="rowSlider">Rows</label>
-        <p>Rows: <span id="rowValue"></span></p>
+    <div id="settingsContainer">
+        <div id="sliderContainer">
+            <div id="rowSliderDiv" class="sliderDiv">
+                <input
+                        type="range"
+                        id="rowSlider"
+                        name="rowSlider"
+                        value="10"
+                        min="3"
+                        max="15"
+                        step="1"
+                />
+                <label for="rowSlider">Rows</label>
+                <p>Rows: <strong><span id="rowValue"></span></strong></p>
+            </div>
+
+            <div id="colSliderDiv" class="sliderDiv">
+                <input
+                        type="range"
+                        id="colSlider"
+                        name="colSlider"
+                        value="10"
+                        min="3"
+                        max="15"
+                        step="1"
+                />
+                <label for="colSlider">Columns</label>
+                <p>Columns: <strong><span id="colValue"></span></strong></p>
+            </div>
+        </div>
+        <div id="buttonContainer">
+            <div id="altruistButton" class="agentButton">
+                <p>Altruist</p>
+            </div>
+            <div id="egoistButton" class="agentButton">
+                <p>Egoist</p>
+            </div>
+            <div id="hooliganButton" class="agentButton">
+                <p>Hooligan</p>
+            </div>
+        </div>
+
+        <div id="resetButton">
+            <p><strong>RESET</strong></p>
+        </div>
+
     </div>
 
-    <div>
-        <input
-                type="range"
-                id="colSlider"
-                name="colSlider"
-                value="10"
-                min="3"
-                max="20"
-                step="1"
-        />
-        <label for="colSlider">Columns</label>
-        <p>Columns: <span id="colValue"></span></p>
-    </div>
 
-    <div id="buttonContainer">
-        <div id="altruistButton" class="agentButton">
-            <p>Altruist</p>
-        </div>
-        <div id="egoistButton" class="agentButton">
-            <p>Egoist</p>
-        </div>
-        <div id="hooliganButton" class="agentButton">
-            <p>Hooligan</p>
-        </div>
-    </div>
         <script src="script.js"></script>
     </body>
 </html>
