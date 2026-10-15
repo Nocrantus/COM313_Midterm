@@ -1,11 +1,9 @@
-
-
 let gameArray = [
     ["","","","","","","","","",""],
     ["","","","","","","","","",""],
     ["","","","","","","","","",""],
     ["","","","","","","","","",""],
-    ["","","","","","","","","",""],
+    ["","","","A","E","","","","",""],
     ["","","","","","","","","",""],
     ["","","","","","","","","",""],
     ["","","","","","","","","",""],
@@ -14,9 +12,16 @@ let gameArray = [
 ]; //unused at the moment, will be used for storing the state of the game
 
 let scoreArray = [
-    ["","",""],
-    ["","",""],
-    ["","",""]
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0]
 ] //Will be used to keep track of the scores of each agent
 
 let cost = 1/4;
@@ -75,13 +80,13 @@ rowSliderValue.textContent = rowSlider.value;
 let colSliderValue = document.querySelector("#colValue");
 let colSlider = document.querySelector("#colSlider");
 colSliderValue.textContent = colSlider.value;
-
 //Event listener for updating the row slider
 rowSlider.addEventListener("input", (event) => {
     rowSliderValue.textContent = event.target.value;
     updateGridSize();
     updateArray();
     console.log(gameArray);
+    console.log(scoreArray);
 });
 
 //Event listener for updating the column slider
@@ -90,6 +95,7 @@ colSlider.addEventListener("input", (event) => {
     updateGridSize();
     updateArray();
     console.log(gameArray);
+    console.log(scoreArray);
 });
 
 //Event listener for when the mouse is down or not
@@ -106,9 +112,30 @@ gridContainer.addEventListener("mouseup", (e) => {
 //Reset button declaration and functionality
 let resetButton = document.getElementById("resetButton");
 resetButton.addEventListener("click", () => {
-    updateGridSize(); //Currently just deletes the grid and re-draws it.
-    //When the gameArray is connected to the cells, this won't work.
-    // we'll need a function to clear the gameArray instead y
+    gameArray = [
+        ["","","","","","","","","",""],
+        ["","","","","","","","","",""],
+        ["","","","","","","","","",""],
+        ["","","","","","","","","",""],
+        ["","","","","","","","","",""],
+        ["","","","","","","","","",""],
+        ["","","","","","","","","",""],
+        ["","","","","","","","","",""],
+        ["","","","","","","","","",""],
+        ["","","","","","","","","",""]
+    ];
+    rowSlider.value = 10;
+    rowSliderValue.textContent = "10";
+    colSlider.value = 10;
+    colSliderValue.textContent = "10";
+    updateGridSize();
+});
+
+//Calculate button declaration and functionality
+let calculateButton = document.getElementById("calculateButton");
+calculateButton.addEventListener("click", () => {
+    updateScores();
+    console.log(scoreArray);
 });
 
 //This function updates the size of the grid every time it is called
@@ -180,21 +207,28 @@ function updateArray(){
     if(newRow<0){
         for(let i=0; i<Math.abs(newRow);i++){
             gameArray.pop();
+            scoreArray.pop();
         }
         //if new row val is greater add a row(asked AI for method and syntax help)
     }else if(newRow>0){
         for(let i=0; i<newRow;i++){
-            let subArray = new Array("");
+            let subGameArray = new Array("");
+            let subScoreArray = [0];
             for (let j = 1; j<colSlider.value;j++){
-                subArray.push("");
+                subGameArray.push("");
+                subScoreArray.push(0);
             }
-            gameArray.push(subArray);///fix this so the added array has empty strings
+            gameArray.push(subGameArray);
+            scoreArray.push(subScoreArray);
         }
     }
     //if new col value is pos remove a sting from all arrays
     if(newCol<0){
         for(let i=0; i<Math.abs(newCol);i++){
             gameArray.forEach(subArray => {
+                subArray.pop();
+            });
+            scoreArray.forEach(subArray => {
                 subArray.pop();
             });
         }
@@ -205,6 +239,9 @@ function updateArray(){
             gameArray.forEach(subArray => {
                 subArray.push("");
             });
+            scoreArray.forEach(subArray => {
+                subArray.push(0);
+            });
         }
     }
     startRowSlider = endRowSlider;
@@ -213,20 +250,12 @@ function updateArray(){
 }
 
 
-function calculateScores() {
-    for (let i = 0; i < rowSlider.value; i++) {
-        for (let j = 0; j < colSlider.value; j++) {
-
-        }
-    }
-}
-
-function sumOfNeighbors(i,j) {
-
+function getAgent(i,j){
+    return gameArray[i][j];
 }
 
 //This function can be improved by using a matrix to encode the game table and just indexing it to find the score.
-function interactionScore(mainAgent, neighbor) {
+function score(mainAgent, neighbor) {
     if (mainAgent === "A" && neighbor === "A") {
         return 1-cost;
     }
@@ -239,7 +268,64 @@ function interactionScore(mainAgent, neighbor) {
     if (mainAgent === "E" && neighbor === "E") {
         return 0;
     }
+    else {
+        return 0;
+    }
 }
+
+function sumOfNeighbors(i,j) {
+    let rowMod = Number(rowSlider.value);
+    let colMod = Number(colSlider.value);
+
+    let mainAgent = getAgent(i,j);
+
+    let iSubMod = (i-1) % rowMod;
+    if (iSubMod < 0) {
+        iSubMod = iSubMod + rowMod;
+    }
+    let iMod = i % rowMod;
+    if (iMod < 0) {
+        iMod = iMod + rowMod;
+    }
+    let iPlusMod = (i+1) % rowMod;
+    if (iPlusMod < 0) {
+        iPlusMod = iPlusMod + rowMod;
+    }
+
+    let jSubMod = (j-1) % colMod;
+    if (jSubMod < 0) {
+        jSubMod += colMod;
+    }
+    let jMod = j % colMod;
+    if (jMod < 0) {
+        jMod += colMod;
+    }
+    let jPlusMod = (j+1) % colMod;
+    if (jPlusMod < 0) {
+        jPlusMod += colMod;
+    }
+
+    return(
+        score(mainAgent, getAgent(iSubMod,jSubMod)) +
+        score(mainAgent, getAgent(iSubMod,jMod)) +
+        score(mainAgent, getAgent(iSubMod,jPlusMod))
+
+        +   score(mainAgent, getAgent(iMod,jSubMod)) +
+        score(mainAgent, getAgent(iMod,jPlusMod))
+
+        +   score(mainAgent, getAgent(iPlusMod,jSubMod)) +
+        score(mainAgent, getAgent(iPlusMod,jMod)) +
+        score(mainAgent, getAgent(iPlusMod,jPlusMod)));
+}
+
+function updateScores() {
+    for (let i = 0; i < rowSlider.value; i++) {
+        for (let j = 0; j < colSlider.value; j++) {
+            scoreArray[i][j] = sumOfNeighbors(i,j);
+        }
+    }
+}
+
 
 updateGridSize(); //initial rendering on load
 

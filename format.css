@@ -84,6 +84,24 @@ body {
     top:0;
     transform: translate(-50%);
 }
+
+#calculateButton {
+    position: absolute;
+    border: 3px solid black;
+    width: 100px;
+    padding: 10px;
+    background-color: lightcoral;
+    justify-content: center;
+    text-align: center;
+    left: 50%;
+    top:100px;
+    transform: translate(-50%);
+}
+
 #resetButton:hover {
+    cursor: pointer;
+}
+
+#calculateButton:hover {
     cursor: pointer;
 }
