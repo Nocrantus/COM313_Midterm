@@ -6,6 +6,14 @@ let gameArray = [
     ["","",""],
 ]; //unused at the moment, will be used for storing the state of the game
 
+let scoreArray = [
+    ["","",""],
+    ["","",""],
+    ["","",""]
+] //Will be used to keep track of the scores of each agent
+
+let cost = 1/4;
+
 //Initialize grid container
 let gridContainer = document.getElementById('gridContainer');
 
@@ -139,6 +147,34 @@ function updateCell(cell) {
         cell.classList.remove("altruistCell");
         cell.classList.remove("egoistCell");
         cell.innerHTML = "<span><strong>H</strong></span>";
+    }
+}
+
+function calculateScores() {
+    for (let i = 0; i < rowSlider.value; i++) {
+        for (let j = 0; j < colSlider.value; j++) {
+
+        }
+    }
+}
+
+function sumOfNeighbors(i,j) {
+
+}
+
+//This function can be improved by using a matrix to encode the game table and just indexing it to find the score.
+function interactionScore(mainAgent, neighbor) {
+    if (mainAgent === "A" && neighbor === "A") {
+        return 1-cost;
+    }
+    if (mainAgent === "A" && neighbor === "E") {
+        return -cost;
+    }
+    if (mainAgent === "E" && neighbor === "A") {
+        return 1;
+    }
+    if (mainAgent === "E" && neighbor === "E") {
+        return 0;
     }
 }
 
