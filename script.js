@@ -1,9 +1,16 @@
 
 
 let gameArray = [
-    ["","",""],
-    ["","",""],
-    ["","",""],
+    ["","","","","","","","","",""],
+    ["","","","","","","","","",""],
+    ["","","","","","","","","",""],
+    ["","","","","","","","","",""],
+    ["","","","","","","","","",""],
+    ["","","","","","","","","",""],
+    ["","","","","","","","","",""],
+    ["","","","","","","","","",""],
+    ["","","","","","","","","",""],
+    ["","","","","","","","","",""],
 ]; //unused at the moment, will be used for storing the state of the game
 
 let scoreArray = [
@@ -50,6 +57,11 @@ hooliganButton.addEventListener("click", () => {
     hooliganButton.style.setProperty("background-color","#d3d3d3");
 });
 
+let startRowSlider = 10;
+let startColSlider = 10;
+let endRowSlider = 10;
+let endColSlider = 10;
+
 //Initialize the row slider
 //var rowSliderValue is the text object that says what the value of the row slider is
 //var rowSlider is the document object of the slider
@@ -68,12 +80,16 @@ colSliderValue.textContent = colSlider.value;
 rowSlider.addEventListener("input", (event) => {
     rowSliderValue.textContent = event.target.value;
     updateGridSize();
+    updateArray();
+    console.log(gameArray);
 });
 
 //Event listener for updating the column slider
 colSlider.addEventListener("input", (event) => {
     colSliderValue.textContent = event.target.value;
     updateGridSize();
+    updateArray();
+    console.log(gameArray);
 });
 
 //Event listener for when the mouse is down or not
@@ -112,16 +128,13 @@ function updateGridSize(){
 
         cell.addEventListener("mouseover", (e) => { //For dragging functionality
             e.preventDefault(); //prevents browser from thinking we're dragging the cell around
-            console.log("entered a cell");
             if (mouseDown){
                 updateCell(cell);
-                console.log(`Cell clicked`);
             }
         });
         cell.addEventListener("mousedown", (e) => { //For clicking functionality
             e.preventDefault(); //prevents browser from thinking we're dragging the cell around
             updateCell(cell);
-            console.log(`Cell clicked`);
         })
 
         gridContainer.appendChild(cell);
@@ -149,6 +162,56 @@ function updateCell(cell) {
         cell.innerHTML = "<span><strong>H</strong></span>";
     }
 }
+
+
+function updateArray(){
+    //old slider vs new slider
+    //set start to 10 bc this is the initial size of the grid
+    //set end to the number the slider is placed on
+    //subtract the the end from start to see if the amount went up or down
+    endRowSlider = rowSlider.value;
+    endColSlider = colSlider.value;
+
+    let newRow=endRowSlider - startRowSlider;
+    let newCol=endColSlider - startColSlider;
+
+    console.log(newRow);
+    //if it is pos remove a row/array
+    if(newRow<0){
+        for(let i=0; i<Math.abs(newRow);i++){
+            gameArray.pop();
+        }
+        //if new row val is greater add a row(asked AI for method and syntax help)
+    }else if(newRow>0){
+        for(let i=0; i<newRow;i++){
+            let subArray = new Array("");
+            for (let j = 1; j<colSlider.value;j++){
+                subArray.push("");
+            }
+            gameArray.push(subArray);///fix this so the added array has empty strings
+        }
+    }
+    //if new col value is pos remove a sting from all arrays
+    if(newCol<0){
+        for(let i=0; i<Math.abs(newCol);i++){
+            gameArray.forEach(subArray => {
+                subArray.pop();
+            });
+        }
+
+        //if new col is neg add empty string to all arrays
+    }else if(newCol>0){
+        for(let i=0; i<newCol;i++){
+            gameArray.forEach(subArray => {
+                subArray.push("");
+            });
+        }
+    }
+    startRowSlider = endRowSlider;
+    startColSlider = endColSlider;
+
+}
+
 
 function calculateScores() {
     for (let i = 0; i < rowSlider.value; i++) {
