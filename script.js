@@ -299,7 +299,7 @@ function updateArray(){
     //old slider vs new slider
     //set start to 10 bc this is the initial size of the grid
     //set end to the number the slider is placed on
-    //subtract the the end from start to see if the amount went up or down
+    //subtract the end from start to see if the amount went up or down
     endRowSlider = rowSlider.value;
     endColSlider = colSlider.value;
 
@@ -487,7 +487,7 @@ function imitateNeighbors(i, j) {
             if (scoreArray[iMod][jMod] > scoreMax) {
                 scoreMax = scoreArray[iMod][jMod];
                 returnAgent = getAgent(iMod, jMod);
-            } else if (scoreArray[iMod][jMod] === scoreMax) { //This is an abitrary choice, change a setting to change this choice
+            } else if (scoreArray[iMod][jMod] === scoreMax) { //This is an arbitrary choice, change a setting to change this choice
                 bestAgents.push(getAgent(iMod, jMod));
             }
         }
@@ -522,7 +522,7 @@ function randomizeGameArray(altruistWeight, egoistWeight) {
     for (let i = 0; i < rowSlider.value; i++) {
         for (let j = 0; j < colSlider.value; j++) {
             let randomValue = Math.floor(Math.random()*100);
-            if (randomValue <= altruistWeight) {
+            if (randomValue < altruistWeight) {
                 gameArray[i][j] = "A";
             }
             else {
