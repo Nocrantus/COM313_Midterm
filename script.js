@@ -3,13 +3,14 @@ let gameArray = [
     ["","","","","","","","","",""],
     ["","","","","","","","","",""],
     ["","","","","","","","","",""],
-    ["","","","A","E","","","","",""],
+    ["","","","","","","","","",""],
     ["","","","","","","","","",""],
     ["","","","","","","","","",""],
     ["","","","","","","","","",""],
     ["","","","","","","","","",""],
     ["","","","","","","","","",""],
 ]; //unused at the moment, will be used for storing the state of the game
+
 
 let scoreArray = [
     [0,0,0,0,0,0,0,0,0,0],
@@ -85,8 +86,6 @@ rowSlider.addEventListener("input", (event) => {
     rowSliderValue.textContent = event.target.value;
     updateGridSize();
     updateArray();
-    console.log(gameArray);
-    console.log(scoreArray);
 });
 
 //Event listener for updating the column slider
@@ -94,8 +93,18 @@ colSlider.addEventListener("input", (event) => {
     colSliderValue.textContent = event.target.value;
     updateGridSize();
     updateArray();
-    console.log(gameArray);
-    console.log(scoreArray);
+});
+
+//Slider for adjusting simulation speed
+let intervalId = null;
+let speedSliderValue = document.querySelector("#speedValue");
+let speedSlider = document.querySelector("#speedSlider");
+speedSliderValue.textContent = speedSlider.value;
+speedSlider.addEventListener("input", (event) => {
+    speedSliderValue.textContent = event.target.value;
+    let intervalId = null;
+    clearInterval(intervalId);
+    updateInterval(Number(event.target.value));
 });
 
 //Event listener for when the mouse is down or not
@@ -124,6 +133,18 @@ resetButton.addEventListener("click", () => {
         ["","","","","","","","","",""],
         ["","","","","","","","","",""]
     ];
+    scoreArray = [
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0]
+    ];
     rowSlider.value = 10;
     rowSliderValue.textContent = "10";
     colSlider.value = 10;
@@ -135,8 +156,25 @@ resetButton.addEventListener("click", () => {
 let calculateButton = document.getElementById("calculateButton");
 calculateButton.addEventListener("click", () => {
     updateScores();
-    console.log(scoreArray);
 });
+
+let advanceButton = document.getElementById("advanceButton");
+advanceButton.addEventListener("click", () => {
+    advanceGameState();
+})
+
+let running = false;
+let runButton = document.getElementById("runButton");
+runButton.addEventListener("click", () => {
+    if (!running) {
+        running = true;
+        runButton.innerHTML = "<p><strong>Stop</strong></p>";
+    } else {
+        running = false;
+        runButton.innerHTML = "<p><strong>Run</strong></p>";
+    }
+    updateInterval(Number(speedSlider.value));
+})
 
 //This function updates the size of the grid every time it is called
 function updateGridSize(){
@@ -150,46 +188,71 @@ function updateGridSize(){
     for (let i = 0; i < rowSlider.value*colSlider.value; i++) { //Generate all the cells within the grid, and make them interactive
         const cell = document.createElement("div");
         cell.classList.add('cell');
-
+        cell.id = i.toString();
         // Anything interactive goes here:
 
         cell.addEventListener("mouseover", (e) => { //For dragging functionality
             e.preventDefault(); //prevents browser from thinking we're dragging the cell around
             if (mouseDown){
-                updateCell(cell);
+                cellClick(cell);
             }
         });
         cell.addEventListener("mousedown", (e) => { //For clicking functionality
             e.preventDefault(); //prevents browser from thinking we're dragging the cell around
-            updateCell(cell);
+            cellClick(cell);
         })
 
         gridContainer.appendChild(cell);
     }
+    updateCells();
 }
 
 //according to the variable updateID, update the cell that's being clicked on
-function updateCell(cell) {
-    if (updateID === "A") {
+function cellClick(cell) {
+    let cellRow = Math.floor(cell.id / colSlider.value);
+    let cellCol = cell.id % colSlider.value;
+    updateCell(cell, updateID);
+    if (updateID === "A") gameArray[cellRow][cellCol] = "A";
+    if (updateID === "E") gameArray[cellRow][cellCol] = "E";
+    if (updateID === "H") gameArray[cellRow][cellCol] = "H";
+}
+
+function updateCell(cell, param){
+    if (param === "A") {
         cell.classList.add("altruistCell");
         cell.classList.remove("egoistCell");
         cell.classList.remove("hooliganCell");
         cell.innerHTML = "<span><strong>A</strong></span>";
     }
-    if (updateID === "E") {
+    if (param === "E") {
         cell.classList.add("egoistCell");
         cell.classList.remove("altruistCell");
         cell.classList.remove("hooliganCell");
         cell.innerHTML = "<span><strong>E</strong></span>";
     }
-    if (updateID === "H") {
+    if (param === "H") {
         cell.classList.add("hooliganCell");
         cell.classList.remove("altruistCell");
         cell.classList.remove("egoistCell");
         cell.innerHTML = "<span><strong>H</strong></span>";
     }
+    else if (param === "") {
+        cell.classList.remove("altruistCell");
+        cell.classList.remove("egoistCell");
+        cell.classList.remove("hooliganCell");
+        cell.innerHTML = "";
+    }
 }
 
+function updateCells() {
+    for (let i = 0; i < rowSlider.value; i++) {
+        for (let j = 0; j < colSlider.value; j++) {
+            let Str = (Number(colSlider.value) * i + j).toString();
+            let cell = document.getElementById(Str);
+            updateCell(cell, getAgent(i,j));
+        }
+    }
+}
 
 function updateArray(){
     //old slider vs new slider
@@ -202,7 +265,6 @@ function updateArray(){
     let newRow=endRowSlider - startRowSlider;
     let newCol=endColSlider - startColSlider;
 
-    console.log(newRow);
     //if it is pos remove a row/array
     if(newRow<0){
         for(let i=0; i<Math.abs(newRow);i++){
@@ -249,12 +311,12 @@ function updateArray(){
 
 }
 
-
 function getAgent(i,j){
     return gameArray[i][j];
 }
 
 //This function can be improved by using a matrix to encode the game table and just indexing it to find the score.
+//IMPLEMENT HOOLIGANS
 function score(mainAgent, neighbor) {
     if (mainAgent === "A" && neighbor === "A") {
         return 1-cost;
@@ -326,8 +388,91 @@ function updateScores() {
     }
 }
 
+function updateGameArray() {
+    let tempGameArray = [];
+
+    for (let i = 0; i < rowSlider.value; i++) {
+        let subArray = [];
+        for (let i = 0; i < colSlider.value; i++) {
+            subArray.push("");
+        }
+        tempGameArray.push(subArray);
+    }
+
+    for (let i = 0; i < rowSlider.value; i++) {
+        for (let j = 0; j < colSlider.value; j++) {
+            tempGameArray[i][j] = gameArray[i][j];
+        }
+    }
+
+    updateScores();
+
+    for (let i = 0; i < rowSlider.value; i++) {
+        for (let j = 0; j < colSlider.value; j++) {
+            tempGameArray[i][j] = imitateNeighbors(i,j);
+        }
+    }
+
+    for (let i = 0; i < rowSlider.value; i++) {
+        for (let j = 0; j < colSlider.value; j++) {
+            gameArray[i][j] = tempGameArray[i][j];
+        }
+    }
+}
+
+function imitateNeighbors(i, j) {
+    let rowMod = Number(rowSlider.value);
+    let colMod = Number(colSlider.value);
+
+    let scoreMax = -10;
+    let returnAgent = getAgent(i, j);
+
+    let bestAgents = [];
+    for (let d = -1; d <= 1; d++) {
+        for (let e = -1; e <= 1; e++) {
+            if (d === 0 && e === 0) {
+                continue;
+            }
+            let iMod = (i + d) % rowMod;
+            let jMod = (j + e) % colMod;
+            if (iMod < 0){
+                iMod += rowMod;
+            }
+            if (jMod < 0){
+                jMod += colMod;
+            }
+            if (getAgent(iMod, jMod) === "") continue;
+
+            if (scoreArray[iMod][jMod] > scoreMax) {
+                scoreMax = scoreArray[iMod][jMod];
+                returnAgent = getAgent(iMod, jMod);
+            } else if (scoreArray[iMod][jMod] === scoreMax) { //This is an abitrary choice, change a setting to change this choice
+                bestAgents.push(getAgent(iMod, jMod));
+            }
+        }
+    }
+    if (bestAgents.length === 0) {
+        return getAgent(i, j);
+    }
+    return bestAgents[Math.floor(Math.random() * bestAgents.length)];
+}
+
+function advanceGameState(){
+    updateGameArray();
+    updateCells();
+}
+
+
+function updateInterval(speed) {
+    if (running) {
+        // Only start if an interval isn't already running
+        if (!intervalId) {
+            intervalId = setInterval(advanceGameState, (1000/speed)); // Runs every 1000ms
+        }
+    } else {
+        clearInterval(intervalId);
+        intervalId = null;
+    }
+}
 
 updateGridSize(); //initial rendering on load
-
-
-

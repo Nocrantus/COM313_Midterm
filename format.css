@@ -63,6 +63,7 @@ body {
     text-align: center;
 }
 .agentButton {
+    user-select: none;
     border: 1px solid black;
     padding: 3px;
     margin-right:15px;
@@ -73,6 +74,7 @@ body {
 }
 
 #resetButton {
+    user-select: none;
     position: absolute;
     border: 3px solid black;
     width: 100px;
@@ -86,6 +88,7 @@ body {
 }
 
 #calculateButton {
+    user-select: none;
     position: absolute;
     border: 3px solid black;
     width: 100px;
@@ -98,10 +101,56 @@ body {
     transform: translate(-50%);
 }
 
+#advanceButton {
+    user-select: none;
+    position: absolute;
+    border: 3px solid black;
+    width: 100px;
+    padding: 10px;
+    background-color: lightgreen;
+    justify-content: center;
+    text-align: center;
+    right: 0;
+    top: 0;
+}
+#runButton {
+    user-select: none;
+    position: absolute;
+    border: 3px solid black;
+    width: 100px;
+    padding: 10px;
+    background-color: lightgreen;
+    justify-content: center;
+    text-align: center;
+    right: 0;
+    top: 100px;
+}
+
+#speedSliderDiv{
+    position: absolute;
+    right: 300px;
+    top: 0;
+    border: 3px solid black;
+    width: 250px;
+    height: 80px;
+}
+#speedSliderDiv p {
+    position: absolute;
+    left: 20px;
+}
+
 #resetButton:hover {
     cursor: pointer;
 }
 
 #calculateButton:hover {
+    cursor: pointer;
+}
+
+#advanceButton:hover {
+    cursor: pointer;
+}
+
+#runButton:hover {
     cursor: pointer;
 }
