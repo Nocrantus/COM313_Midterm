@@ -63,6 +63,35 @@ hooliganButton.addEventListener("click", () => {
     hooliganButton.style.setProperty("background-color","#d3d3d3");
 });
 
+//Initialize the buttons
+let button1 = document.getElementById("2575Button");
+let button2 = document.getElementById("5050Button");
+let button3 = document.getElementById("7525Button");
+button1.style.setProperty("background-color","#FFFFFF");
+button2.style.setProperty("background-color","#FFFFFF");
+button3.style.setProperty("background-color","#FFFFFF");
+button1.addEventListener("click", () => {
+    randomizeGameArray(25,75);
+    updateCells();
+    randomSliderValue.textContent = "25";
+    randomSlider.value = 25;
+
+});
+button2.addEventListener("click", () => {
+    randomizeGameArray(50,50);
+    updateCells();
+    randomSliderValue.textContent = "50";
+    randomSlider.value = 50;
+
+});
+button3.addEventListener("click", () => {
+    randomizeGameArray(75,25);
+    updateCells();
+    randomSliderValue.textContent = "75";
+    randomSlider.value = 75;
+
+});
+
 let startRowSlider = 10;
 let startColSlider = 10;
 let endRowSlider = 10;
@@ -102,9 +131,27 @@ let speedSlider = document.querySelector("#speedSlider");
 speedSliderValue.textContent = speedSlider.value;
 speedSlider.addEventListener("input", (event) => {
     speedSliderValue.textContent = event.target.value;
-    let intervalId = null;
+    let speedValue = parseInt(event.target.value, 10);
     clearInterval(intervalId);
-    updateInterval(Number(event.target.value));
+    intervalId = null;
+    updateInterval(speedValue);
+});
+
+//Slider for generating a random grid
+let randomSliderValue = document.querySelector("#randomValue");
+let randomSlider = document.querySelector("#randomSlider");
+randomSliderValue.textContent = randomSlider.value;
+//Event listener for updating the random slider
+randomSlider.addEventListener("input", (event) => {
+    randomSliderValue.textContent = event.target.value;
+    randomizeGameArray(randomSlider.value, 100-randomSlider.value);
+    updateCells();
+});
+let generateButton = document.getElementById("generateButton");
+generateButton.style.setProperty("background-color","#FFFFFF");
+generateButton.addEventListener("click", () => {
+    randomizeGameArray(randomSlider.value,100-randomSlider.value);
+    updateCells();
 });
 
 //Event listener for when the mouse is down or not
@@ -150,12 +197,6 @@ resetButton.addEventListener("click", () => {
     colSlider.value = 10;
     colSliderValue.textContent = "10";
     updateGridSize();
-});
-
-//Calculate button declaration and functionality
-let calculateButton = document.getElementById("calculateButton");
-calculateButton.addEventListener("click", () => {
-    updateScores();
 });
 
 let advanceButton = document.getElementById("advanceButton");
@@ -462,16 +503,32 @@ function advanceGameState(){
     updateCells();
 }
 
-
 function updateInterval(speed) {
+    console.log("activated");
+    console.log(running);
     if (running) {
         // Only start if an interval isn't already running
-        if (!intervalId) {
+        if (intervalId == null) {
             intervalId = setInterval(advanceGameState, (1000/speed)); // Runs every 1000ms
+            console.log(intervalId);
         }
     } else {
         clearInterval(intervalId);
         intervalId = null;
+    }
+}
+
+function randomizeGameArray(altruistWeight, egoistWeight) {
+    for (let i = 0; i < rowSlider.value; i++) {
+        for (let j = 0; j < colSlider.value; j++) {
+            let randomValue = Math.floor(Math.random()*100);
+            if (randomValue <= altruistWeight) {
+                gameArray[i][j] = "A";
+            }
+            else {
+                gameArray[i][j] = "E";
+            }
+        }
     }
 }
 

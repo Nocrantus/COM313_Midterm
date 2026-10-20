@@ -87,20 +87,6 @@ body {
     transform: translate(-50%);
 }
 
-#calculateButton {
-    user-select: none;
-    position: absolute;
-    border: 3px solid black;
-    width: 100px;
-    padding: 10px;
-    background-color: lightcoral;
-    justify-content: center;
-    text-align: center;
-    left: 50%;
-    top:100px;
-    transform: translate(-50%);
-}
-
 #advanceButton {
     user-select: none;
     position: absolute;
@@ -128,7 +114,7 @@ body {
 
 #speedSliderDiv{
     position: absolute;
-    right: 300px;
+    right: 200px;
     top: 0;
     border: 3px solid black;
     width: 250px;
@@ -143,14 +129,37 @@ body {
     cursor: pointer;
 }
 
-#calculateButton:hover {
-    cursor: pointer;
-}
-
 #advanceButton:hover {
     cursor: pointer;
 }
 
 #runButton:hover {
     cursor: pointer;
+}
+
+#randomContainer {
+    position: absolute;
+    border: 3px solid black;
+    display: grid;
+    grid-template-columns: 100px 100px 100px;
+    width: 300px;
+    padding: 10px;
+    justify-content: center;
+    text-align: center;
+    left: 50%;
+    bottom: 0;
+    transform: translate(-50%);
+}
+#randomSliderDiv {
+    position: absolute;
+    border: 3px solid black;
+    display: grid;
+    grid-template-columns: 100px 100px 100px;
+    width: 300px;
+    padding: 10px;
+    justify-content: center;
+    text-align: center;
+    left: 50%;
+    bottom: 100px;
+    transform: translate(-50%);
 }
