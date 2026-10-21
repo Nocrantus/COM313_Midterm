@@ -26,7 +26,7 @@ let scoreArray = [
     [0,0,0,0,0,0,0,0,0,0]
 ]
 
-let cost = 1/4; //Interesting behavior for odd values
+let cost = 1/5; //Interesting behavior for odd values
 
 let matrixID = "R"; //tiebreaker ID: 0 for top-left priority, 1 for bottom-right priority, R for random priority
 
