@@ -1,3 +1,4 @@
+//Used for storing the state of the game board
 let gameArray = [
     ["","","","","","","","","",""],
     ["","","","","","","","","",""],
@@ -9,9 +10,9 @@ let gameArray = [
     ["","","","","","","","","",""],
     ["","","","","","","","","",""],
     ["","","","","","","","","",""],
-]; //unused at the moment, will be used for storing the state of the game
+];
 
-
+//Used for storing the score each agent on the board receives each round
 let scoreArray = [
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
@@ -23,75 +24,67 @@ let scoreArray = [
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0]
-] //Will be used to keep track of the scores of each agent
+]
 
-let cost = 1/4;
+let cost = 1/4; //Interesting behavior for odd values
+
+let matrixID = "R"; //tiebreaker ID: 0 for top-left priority, 1 for bottom-right priority, R for random priority
 
 //Initialize grid container
 let gridContainer = document.getElementById('gridContainer');
 
-//Initialize the buttons
+//Initialize the altruist / egoist buttons
 let altruistButton = document.getElementById("altruistButton");
 let egoistButton = document.getElementById("egoistButton");
-let hooliganButton = document.getElementById("hooliganButton");
 altruistButton.style.setProperty("background-color","#d3d3d3");
 egoistButton.style.setProperty("background-color","#FFFFFF");
-hooliganButton.style.setProperty("background-color","#FFFFFF");
 
-//Global variable for determining which agent to update the cell with
+//Global variable for determining which agent to update a cell with (draw mode)
 let updateID = "A";
 
+//Event listeners for when the altruist/egoist buttons are clicked
 altruistButton.addEventListener("click", () => {
     console.log("Altruist mode engaged");
     updateID = "A";
     altruistButton.style.setProperty("background-color","#d3d3d3");
     egoistButton.style.setProperty("background-color","#FFFFFF");
-    hooliganButton.style.setProperty("background-color","#FFFFFF");
 });
 egoistButton.addEventListener("click", () => {
     console.log("Egoist mode engaged");
     updateID = "E";
     altruistButton.style.setProperty("background-color","#FFFFFF");
     egoistButton.style.setProperty("background-color","#d3d3d3");
-    hooliganButton.style.setProperty("background-color","#FFFFFF");
-});
-hooliganButton.addEventListener("click", () => {
-    console.log("Hooligan mode engaged");
-    updateID = "H";
-    altruistButton.style.setProperty("background-color","#FFFFFF");
-    egoistButton.style.setProperty("background-color","#FFFFFF");
-    hooliganButton.style.setProperty("background-color","#d3d3d3");
 });
 
-//Initialize the buttons
+//Initialize the random distribution buttons
 let button1 = document.getElementById("2575Button");
 let button2 = document.getElementById("5050Button");
 let button3 = document.getElementById("7525Button");
 button1.style.setProperty("background-color","#FFFFFF");
 button2.style.setProperty("background-color","#FFFFFF");
 button3.style.setProperty("background-color","#FFFFFF");
+
+//Event listeners for the random distribution buttons
 button1.addEventListener("click", () => {
-    randomizeGameArray(25,75);
+    randomizeGameArray(25);
     updateCells();
     randomSliderValue.textContent = "25";
     randomSlider.value = 25;
-
 });
 button2.addEventListener("click", () => {
-    randomizeGameArray(50,50);
+    randomizeGameArray(50);
     updateCells();
     randomSliderValue.textContent = "50";
     randomSlider.value = 50;
-
 });
 button3.addEventListener("click", () => {
-    randomizeGameArray(75,25);
+    randomizeGameArray(75);
     updateCells();
     randomSliderValue.textContent = "75";
     randomSlider.value = 75;
-
 });
 
+//logic for dealing with slider changes
 let startRowSlider = 10;
 let startColSlider = 10;
 let endRowSlider = 10;
@@ -110,18 +103,19 @@ rowSliderValue.textContent = rowSlider.value;
 let colSliderValue = document.querySelector("#colValue");
 let colSlider = document.querySelector("#colSlider");
 colSliderValue.textContent = colSlider.value;
+
 //Event listener for updating the row slider
 rowSlider.addEventListener("input", (event) => {
     rowSliderValue.textContent = event.target.value;
-    updateGridSize();
     updateArray();
+    updateGridSize();
 });
 
 //Event listener for updating the column slider
 colSlider.addEventListener("input", (event) => {
     colSliderValue.textContent = event.target.value;
-    updateGridSize();
     updateArray();
+    updateGridSize();
 });
 
 //Slider for adjusting simulation speed
@@ -131,7 +125,7 @@ let speedSlider = document.querySelector("#speedSlider");
 speedSliderValue.textContent = speedSlider.value;
 speedSlider.addEventListener("input", (event) => {
     speedSliderValue.textContent = event.target.value;
-    let speedValue = parseInt(event.target.value, 10);
+    let speedValue = parseInt(event.target.value, 10); //weirdly the only casting way I could get this to work
     clearInterval(intervalId);
     intervalId = null;
     updateInterval(speedValue);
@@ -141,16 +135,19 @@ speedSlider.addEventListener("input", (event) => {
 let randomSliderValue = document.querySelector("#randomValue");
 let randomSlider = document.querySelector("#randomSlider");
 randomSliderValue.textContent = randomSlider.value;
+
 //Event listener for updating the random slider
 randomSlider.addEventListener("input", (event) => {
     randomSliderValue.textContent = event.target.value;
-    randomizeGameArray(randomSlider.value, 100-randomSlider.value);
+    randomizeGameArray(randomSlider.value);
     updateCells();
 });
+
+//Button to generate a random grid given the slider value
 let generateButton = document.getElementById("generateButton");
 generateButton.style.setProperty("background-color","#FFFFFF");
 generateButton.addEventListener("click", () => {
-    randomizeGameArray(randomSlider.value,100-randomSlider.value);
+    randomizeGameArray(randomSlider.value);
     updateCells();
 });
 
@@ -199,11 +196,13 @@ resetButton.addEventListener("click", () => {
     updateGridSize();
 });
 
+//Advance button initialization (used to advance the game by one timestep)
 let advanceButton = document.getElementById("advanceButton");
 advanceButton.addEventListener("click", () => {
     advanceGameState();
 })
 
+//Run button, used to run and pause the simulation
 let running = false;
 let runButton = document.getElementById("runButton");
 runButton.addEventListener("click", () => {
@@ -215,7 +214,32 @@ runButton.addEventListener("click", () => {
         runButton.innerHTML = "<p><strong>Run</strong></p>";
     }
     updateInterval(Number(speedSlider.value));
+});
+
+//initialize the tiebreaking selectors
+let topLeft = document.getElementById("topLeft");
+topLeft.addEventListener("click", () => {
+    matrixID = "0";
+    topLeft.style.setProperty("background-color","#d3d3d3");
+    random.style.setProperty("background-color","#FFFFFF");
+    bottomRight.style.setProperty("background-color","#FFFFFF");
 })
+let random = document.getElementById("random");
+random.style.setProperty("background-color","#d3d3d3");
+random.addEventListener("click", () => {
+    matrixID = "R";
+    topLeft.style.setProperty("background-color","#FFFFFF");
+    random.style.setProperty("background-color","#d3d3d3");
+    bottomRight.style.setProperty("background-color","#FFFFFF");
+})
+let bottomRight = document.getElementById("bottomRight");
+bottomRight.addEventListener("click", () => {
+    matrixID = "1";
+    topLeft.style.setProperty("background-color","#FFFFFF");
+    random.style.setProperty("background-color","#FFFFFF");
+    bottomRight.style.setProperty("background-color","#d3d3d3");
+})
+
 
 //This function updates the size of the grid every time it is called
 function updateGridSize(){
@@ -255,32 +279,22 @@ function cellClick(cell) {
     updateCell(cell, updateID);
     if (updateID === "A") gameArray[cellRow][cellCol] = "A";
     if (updateID === "E") gameArray[cellRow][cellCol] = "E";
-    if (updateID === "H") gameArray[cellRow][cellCol] = "H";
 }
 
 function updateCell(cell, param){
     if (param === "A") {
         cell.classList.add("altruistCell");
         cell.classList.remove("egoistCell");
-        cell.classList.remove("hooliganCell");
         cell.innerHTML = "<span><strong>A</strong></span>";
     }
     if (param === "E") {
         cell.classList.add("egoistCell");
         cell.classList.remove("altruistCell");
-        cell.classList.remove("hooliganCell");
         cell.innerHTML = "<span><strong>E</strong></span>";
-    }
-    if (param === "H") {
-        cell.classList.add("hooliganCell");
-        cell.classList.remove("altruistCell");
-        cell.classList.remove("egoistCell");
-        cell.innerHTML = "<span><strong>H</strong></span>";
     }
     else if (param === "") {
         cell.classList.remove("altruistCell");
         cell.classList.remove("egoistCell");
-        cell.classList.remove("hooliganCell");
         cell.innerHTML = "";
     }
 }
@@ -357,7 +371,7 @@ function getAgent(i,j){
 }
 
 //This function can be improved by using a matrix to encode the game table and just indexing it to find the score.
-//IMPLEMENT HOOLIGANS
+//I'll do that later
 function score(mainAgent, neighbor) {
     if (mainAgent === "A" && neighbor === "A") {
         return 1-cost;
@@ -376,6 +390,7 @@ function score(mainAgent, neighbor) {
     }
 }
 
+//Given a cell position, find the total score given to it by all its neighbors using the score function
 function sumOfNeighbors(i,j) {
     let rowMod = Number(rowSlider.value);
     let colMod = Number(colSlider.value);
@@ -421,6 +436,7 @@ function sumOfNeighbors(i,j) {
         score(mainAgent, getAgent(iPlusMod,jPlusMod)));
 }
 
+//Updates the scoreArray for all cells
 function updateScores() {
     for (let i = 0; i < rowSlider.value; i++) {
         for (let j = 0; j < colSlider.value; j++) {
@@ -429,7 +445,9 @@ function updateScores() {
     }
 }
 
+//Given the score array, update the gameArray using imitation dynamics
 function updateGameArray() {
+    //Here is just to create a snapshot of the gameArray array. This was the only way I could manage to do it
     let tempGameArray = [];
 
     for (let i = 0; i < rowSlider.value; i++) {
@@ -448,12 +466,13 @@ function updateGameArray() {
 
     updateScores();
 
+    //Imitation dynamics
     for (let i = 0; i < rowSlider.value; i++) {
         for (let j = 0; j < colSlider.value; j++) {
             tempGameArray[i][j] = imitateNeighbors(i,j);
         }
     }
-
+    //Copying the result onto the gameArray
     for (let i = 0; i < rowSlider.value; i++) {
         for (let j = 0; j < colSlider.value; j++) {
             gameArray[i][j] = tempGameArray[i][j];
@@ -461,6 +480,8 @@ function updateGameArray() {
     }
 }
 
+//lots of modulus stuff to just allow for screen wrapping
+//Given a cell position, imitate the immediate neighbor with the highest score
 function imitateNeighbors(i, j) {
     let rowMod = Number(rowSlider.value);
     let colMod = Number(colSlider.value);
@@ -487,7 +508,7 @@ function imitateNeighbors(i, j) {
             if (scoreArray[iMod][jMod] > scoreMax) {
                 scoreMax = scoreArray[iMod][jMod];
                 returnAgent = getAgent(iMod, jMod);
-            } else if (scoreArray[iMod][jMod] === scoreMax) { //This is an arbitrary choice, change a setting to change this choice
+            } else if (scoreArray[iMod][jMod] === scoreMax) {
                 bestAgents.push(getAgent(iMod, jMod));
             }
         }
@@ -495,14 +516,27 @@ function imitateNeighbors(i, j) {
     if (bestAgents.length === 0) {
         return getAgent(i, j);
     }
-    return bestAgents[Math.floor(Math.random() * bestAgents.length)];
+    //Tiebreaker
+    //MatrixID name is leftover from previous implementation
+    if (matrixID === "1") {
+        return bestAgents[bestAgents.length - 1];
+    }
+    else if (matrixID === "0") {
+        return bestAgents[0];
+    }
+    else {
+        return bestAgents[Math.floor(Math.random() * bestAgents.length)];
+    }
+
 }
 
+//Advances the game state by one timestep
 function advanceGameState(){
     updateGameArray();
     updateCells();
 }
 
+//Function for advancing the game state on a loop
 function updateInterval(speed) {
     console.log("activated");
     console.log(running);
@@ -517,8 +551,8 @@ function updateInterval(speed) {
         intervalId = null;
     }
 }
-
-function randomizeGameArray(altruistWeight, egoistWeight) {
+//Function for randomizing the gameArray given an altruistWeight (% of altruists
+function randomizeGameArray(altruistWeight) {
     for (let i = 0; i < rowSlider.value; i++) {
         for (let j = 0; j < colSlider.value; j++) {
             let randomValue = Math.floor(Math.random()*100);

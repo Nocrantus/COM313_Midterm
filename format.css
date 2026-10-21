@@ -56,8 +56,8 @@ body {
     position: relative;
     border: 3px solid black;
     display: grid;
-    grid-template-columns: 100px 100px 100px;
-    width: 300px;
+    grid-template-columns: 100px 100px;
+    width: 200px;
     padding: 10px;
     justify-content: center;
     text-align: center;
@@ -162,4 +162,26 @@ body {
     left: 50%;
     bottom: 100px;
     transform: translate(-50%);
+}
+
+#matrixGridDiv {
+    display:grid;
+    grid-template-columns: 85px 85px 85px;
+    grid-template-rows: 40px 40px 40px;
+    position: absolute;
+    right:205px;
+    bottom:20px;
+    justify-content: center;
+}
+.matrix{
+    width:90px;
+    height:40px;
+    border: 1px solid black;
+    text-align: center;
+    background-color: white;
+    user-select: none;
+    padding: 3px;
+}
+.matrix:hover{
+    cursor: pointer;
 }
