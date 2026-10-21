@@ -163,35 +163,12 @@ gridContainer.addEventListener("mouseup", (e) => {
 //Reset button declaration and functionality
 let resetButton = document.getElementById("resetButton");
 resetButton.addEventListener("click", () => {
-    gameArray = [
-        ["","","","","","","","","",""],
-        ["","","","","","","","","",""],
-        ["","","","","","","","","",""],
-        ["","","","","","","","","",""],
-        ["","","","","","","","","",""],
-        ["","","","","","","","","",""],
-        ["","","","","","","","","",""],
-        ["","","","","","","","","",""],
-        ["","","","","","","","","",""],
-        ["","","","","","","","","",""]
-    ];
-    scoreArray = [
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0]
-    ];
-    rowSlider.value = 10;
-    rowSliderValue.textContent = "10";
-    colSlider.value = 10;
-    colSliderValue.textContent = "10";
-    updateGridSize();
+    for (let i = 0; i < rowSlider.value; i++) {
+        for (let j = 0; j < colSlider.value; j++) {
+            gameArray[i][j] = "";
+            scoreArray[i][j] = 0;
+        }
+    }
 });
 
 //Advance button initialization (used to advance the game by one timestep)
@@ -217,7 +194,7 @@ runButton.addEventListener("click", () => {
 //This function updates the size of the grid every time it is called
 function updateGridSize(){
     gridContainer.innerHTML = ''; //reset the grid
-    gridContainer.style.setProperty("top", 15*(15-rowSlider.value) + "px");
+    gridContainer.style.setProperty("top", 15*(15-rowSlider.value)+80 + "px");
     let gridTemplateRowsString = "repeat(" + rowSlider.value + ", 1fr)";
     let gridTemplateColsString = "repeat(" + colSlider.value + ", 30px)";
     gridContainer.style.setProperty("grid-template-rows", gridTemplateRowsString); //set row amount
