@@ -26,9 +26,7 @@ let scoreArray = [
     [0,0,0,0,0,0,0,0,0,0]
 ]
 
-let cost = 1/5; //Interesting behavior for odd values
-
-let matrixID = "R"; //tiebreaker ID: 0 for top-left priority, 1 for bottom-right priority, R for random priority
+let cost = 1/10; //Interesting behavior for odd values
 
 //Initialize grid container
 let gridContainer = document.getElementById('gridContainer');
@@ -215,31 +213,6 @@ runButton.addEventListener("click", () => {
     }
     updateInterval(Number(speedSlider.value));
 });
-
-//initialize the tiebreaking selectors
-let topLeft = document.getElementById("topLeft");
-topLeft.addEventListener("click", () => {
-    matrixID = "0";
-    topLeft.style.setProperty("background-color","#d3d3d3");
-    random.style.setProperty("background-color","#FFFFFF");
-    bottomRight.style.setProperty("background-color","#FFFFFF");
-})
-let random = document.getElementById("random");
-random.style.setProperty("background-color","#d3d3d3");
-random.addEventListener("click", () => {
-    matrixID = "R";
-    topLeft.style.setProperty("background-color","#FFFFFF");
-    random.style.setProperty("background-color","#d3d3d3");
-    bottomRight.style.setProperty("background-color","#FFFFFF");
-})
-let bottomRight = document.getElementById("bottomRight");
-bottomRight.addEventListener("click", () => {
-    matrixID = "1";
-    topLeft.style.setProperty("background-color","#FFFFFF");
-    random.style.setProperty("background-color","#FFFFFF");
-    bottomRight.style.setProperty("background-color","#d3d3d3");
-})
-
 
 //This function updates the size of the grid every time it is called
 function updateGridSize(){
@@ -508,6 +481,7 @@ function imitateNeighbors(i, j) {
             if (scoreArray[iMod][jMod] > scoreMax) {
                 scoreMax = scoreArray[iMod][jMod];
                 returnAgent = getAgent(iMod, jMod);
+                bestAgents = [getAgent(iMod,jMod)];
             } else if (scoreArray[iMod][jMod] === scoreMax) {
                 bestAgents.push(getAgent(iMod, jMod));
             }
@@ -516,17 +490,7 @@ function imitateNeighbors(i, j) {
     if (bestAgents.length === 0) {
         return getAgent(i, j);
     }
-    //Tiebreaker
-    //MatrixID name is leftover from previous implementation
-    if (matrixID === "1") {
-        return bestAgents[bestAgents.length - 1];
-    }
-    else if (matrixID === "0") {
-        return bestAgents[0];
-    }
-    else {
         return bestAgents[Math.floor(Math.random() * bestAgents.length)];
-    }
 
 }
 
@@ -534,6 +498,8 @@ function imitateNeighbors(i, j) {
 function advanceGameState(){
     updateGameArray();
     updateCells();
+    console.log(gameArray);
+    console.log(scoreArray);
 }
 
 //Function for advancing the game state on a loop
