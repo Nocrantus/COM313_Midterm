@@ -217,7 +217,7 @@ runButton.addEventListener("click", () => {
 //This function updates the size of the grid every time it is called
 function updateGridSize(){
     gridContainer.innerHTML = ''; //reset the grid
-    gridContainer.style.setProperty("top", 15*(15-rowSlider.value) + "px");
+    gridContainer.style.setProperty("top",  (screen.height - 450)/2 - (rowSlider.value*15) + "px");
     let gridTemplateRowsString = "repeat(" + rowSlider.value + ", 1fr)";
     let gridTemplateColsString = "repeat(" + colSlider.value + ", 30px)";
     gridContainer.style.setProperty("grid-template-rows", gridTemplateRowsString); //set row amount
