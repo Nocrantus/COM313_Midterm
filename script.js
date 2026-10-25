@@ -26,7 +26,7 @@ let scoreArray = [
     [0,0,0,0,0,0,0,0,0,0]
 ]
 
-let cost = 1/10; //Interesting behavior for odd values
+let cost = 1/10; //Must be less than 1/8
 
 //Initialize grid container
 let gridContainer = document.getElementById('gridContainer');
@@ -34,8 +34,10 @@ let gridContainer = document.getElementById('gridContainer');
 //Initialize the altruist / egoist buttons
 let altruistButton = document.getElementById("altruistButton");
 let egoistButton = document.getElementById("egoistButton");
+let hooliganButton = document.getElementById("hooliganButton");
 altruistButton.style.setProperty("background-color","#d3d3d3");
 egoistButton.style.setProperty("background-color","#FFFFFF");
+hooliganButton.style.setProperty("background-color","#FFFFFF");
 
 //Global variable for determining which agent to update a cell with (draw mode)
 let updateID = "A";
@@ -46,12 +48,22 @@ altruistButton.addEventListener("click", () => {
     updateID = "A";
     altruistButton.style.setProperty("background-color","#d3d3d3");
     egoistButton.style.setProperty("background-color","#FFFFFF");
+    hooliganButton.style.setProperty("background-color","#FFFFFF");
+
 });
 egoistButton.addEventListener("click", () => {
     console.log("Egoist mode engaged");
     updateID = "E";
     altruistButton.style.setProperty("background-color","#FFFFFF");
     egoistButton.style.setProperty("background-color","#d3d3d3");
+    hooliganButton.style.setProperty("background-color","#FFFFFF");
+});
+hooliganButton.addEventListener("click", () => {
+    console.log("Hooligan mode engaged");
+    updateID = "H";
+    altruistButton.style.setProperty("background-color","#FFFFFF");
+    egoistButton.style.setProperty("background-color","#FFFFFF");
+    hooliganButton.style.setProperty("background-color","#d3d3d3");
 });
 
 //Initialize the random distribution buttons
@@ -191,6 +203,9 @@ resetButton.addEventListener("click", () => {
     rowSliderValue.textContent = "10";
     colSlider.value = 10;
     colSliderValue.textContent = "10";
+    startRowSlider = 10;
+    startColSlider = 10;endRowSlider = 10;
+    endColSlider = 10;
     updateGridSize();
 });
 
@@ -217,7 +232,7 @@ runButton.addEventListener("click", () => {
 //This function updates the size of the grid every time it is called
 function updateGridSize(){
     gridContainer.innerHTML = ''; //reset the grid
-    gridContainer.style.setProperty("top",  (screen.height - 450)/2 - (rowSlider.value*15) + "px");
+    //gridContainer.style.setProperty("top", 15*(15-rowSlider.value)+80 + "px");
     let gridTemplateRowsString = "repeat(" + rowSlider.value + ", 1fr)";
     let gridTemplateColsString = "repeat(" + colSlider.value + ", 30px)";
     gridContainer.style.setProperty("grid-template-rows", gridTemplateRowsString); //set row amount
@@ -346,21 +361,45 @@ function getAgent(i,j){
 //This function can be improved by using a matrix to encode the game table and just indexing it to find the score.
 //I'll do that later
 function score(mainAgent, neighbor) {
-    if (mainAgent === "A" && neighbor === "A") {
-        return 1-cost;
+    let scoreTable = [
+        /*Empty*/   [0,0,0,0],
+        /*Altruist*/[0,1-cost,-cost,-1],
+        /*Egoist*/  [0,1,0,-1],
+        /*Hooligan*/[0,1,1,0]
+    ];
+    let mainIndex = 0;
+    let neighborIndex = 0;
+    switch (mainAgent) {
+        case "":
+            mainIndex = 0;
+            break;
+        case "A":
+            mainIndex = 1;
+            break;
+        case "E":
+            mainIndex = 2;
+            break;
+        case "H":
+            mainIndex = 3;
+            break;
     }
-    if (mainAgent === "A" && neighbor === "E") {
-        return -cost;
+    switch (neighbor) {
+        case "":
+            neighborIndex = 0;
+            break;
+        case "A":
+            neighborIndex = 1;
+            break;
+        case "E":
+            neighborIndex = 2;
+            break;
+        case "H":
+            neighborIndex = 3;
+            break;
     }
-    if (mainAgent === "E" && neighbor === "A") {
-        return 1;
-    }
-    if (mainAgent === "E" && neighbor === "E") {
-        return 0;
-    }
-    else {
-        return 0;
-    }
+
+    return scoreTable[mainIndex][neighborIndex];
+
 }
 
 //Given a cell position, find the total score given to it by all its neighbors using the score function
@@ -498,8 +537,6 @@ function imitateNeighbors(i, j) {
 function advanceGameState(){
     updateGameArray();
     updateCells();
-    console.log(gameArray);
-    console.log(scoreArray);
 }
 
 //Function for advancing the game state on a loop

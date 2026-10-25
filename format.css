@@ -56,8 +56,8 @@ body {
     position: relative;
     border: 3px solid black;
     display: grid;
-    grid-template-columns: 100px 100px;
-    width: 200px;
+    grid-template-columns: 100px 100px 100px;
+    width: 300px;
     padding: 10px;
     justify-content: center;
     text-align: center;
