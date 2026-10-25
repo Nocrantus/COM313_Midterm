@@ -3,8 +3,8 @@ body {
 }
 
 #gridContainer {
-     display: grid;
-     justify-content: center;
+    display: grid;
+    justify-content: center;
     position: relative;
     margin: auto;
  }
@@ -27,7 +27,7 @@ body {
     bottom: 10px;
     left: 1%;
     width: 98%;
-    border: 1px solid black;
+    border: 2px solid black;
 }
 
 #sliderContainer {
