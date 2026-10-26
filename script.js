@@ -26,7 +26,8 @@ let scoreArray = [
     [0,0,0,0,0,0,0,0,0,0]
 ]
 
-let cost = 1/10; //Must be less than 1/8
+let costOfA = 1/16; //Must be less than 1/8
+let costOfE = 1/16;
 
 //Initialize grid container
 let gridContainer = document.getElementById('gridContainer');
@@ -209,6 +210,21 @@ resetButton.addEventListener("click", () => {
     updateGridSize();
 });
 
+//Looping button functionality
+let loopWalls = 1;
+let loopButton = document.getElementById("loopButton");
+loopButton.style.setProperty("background-color","#c3c3c3");
+loopButton.addEventListener("click", () => {
+    if (loopWalls === 1){
+        loopWalls = 0;
+        loopButton.style.setProperty("background-color","#FFFFFF");
+        return;
+    }
+    if (loopWalls === 0){
+        loopWalls = 1;
+        loopButton.style.setProperty("background-color","#c3c3c3");
+    }
+})
 //Advance button initialization (used to advance the game by one timestep)
 let advanceButton = document.getElementById("advanceButton");
 advanceButton.addEventListener("click", () => {
@@ -267,22 +283,32 @@ function cellClick(cell) {
     updateCell(cell, updateID);
     if (updateID === "A") gameArray[cellRow][cellCol] = "A";
     if (updateID === "E") gameArray[cellRow][cellCol] = "E";
+    if (updateID === "H") gameArray[cellRow][cellCol] = "H";
 }
 
 function updateCell(cell, param){
     if (param === "A") {
         cell.classList.add("altruistCell");
         cell.classList.remove("egoistCell");
+        cell.classList.remove("hooliganCell");
         cell.innerHTML = "<span><strong>A</strong></span>";
     }
     if (param === "E") {
         cell.classList.add("egoistCell");
         cell.classList.remove("altruistCell");
+        cell.classList.remove("hooliganCell");
         cell.innerHTML = "<span><strong>E</strong></span>";
+    }
+    if (param === "H") {
+        cell.classList.add("hooliganCell");
+        cell.classList.remove("altruistCell");
+        cell.classList.remove("egoistCell");
+        cell.innerHTML = "<span><strong>H</strong></span>";
     }
     else if (param === "") {
         cell.classList.remove("altruistCell");
         cell.classList.remove("egoistCell");
+        cell.classList.remove("hooliganCell");
         cell.innerHTML = "";
     }
 }
@@ -358,15 +384,17 @@ function getAgent(i,j){
     return gameArray[i][j];
 }
 
-//This function can be improved by using a matrix to encode the game table and just indexing it to find the score.
-//I'll do that later
-function score(mainAgent, neighbor) {
+//Calculates the score using a score matrix
+function score(mainAgent, i,j) {
     let scoreTable = [
-        /*Empty*/   [0,0,0,0],
-        /*Altruist*/[0,1-cost,-cost,-1],
-        /*Egoist*/  [0,1,0,-1],
-        /*Hooligan*/[0,1,1,0]
+        /*Empty*/   [-10,-10,-10,-10],
+        /*Altruist*/[0,1-costOfA,-costOfA,-costOfA],
+        /*Egoist*/  [0,1,0,-costOfE],
+        /*Hooligan*/[0,1,1,-1]
     ];
+    if (i < 0 || i >= Number(rowSlider.value)) return 0;
+    if (j < 0 || j >= Number(colSlider.value)) return 0;
+    let neighbor = getAgent(i,j);
     let mainIndex = 0;
     let neighborIndex = 0;
     switch (mainAgent) {
@@ -397,7 +425,6 @@ function score(mainAgent, neighbor) {
             neighborIndex = 3;
             break;
     }
-
     return scoreTable[mainIndex][neighborIndex];
 
 }
@@ -436,23 +463,43 @@ function sumOfNeighbors(i,j) {
     }
 
     return(
-        score(mainAgent, getAgent(iSubMod,jSubMod)) +
-        score(mainAgent, getAgent(iSubMod,jMod)) +
-        score(mainAgent, getAgent(iSubMod,jPlusMod))
+        score(mainAgent, iSubMod,jSubMod) +
+        score(mainAgent, iSubMod,jMod) +
+        score(mainAgent, iSubMod,jPlusMod)
 
-        +   score(mainAgent, getAgent(iMod,jSubMod)) +
-        score(mainAgent, getAgent(iMod,jPlusMod))
+        +   score(mainAgent, iMod,jSubMod) +
+        score(mainAgent, iMod,jPlusMod)
 
-        +   score(mainAgent, getAgent(iPlusMod,jSubMod)) +
-        score(mainAgent, getAgent(iPlusMod,jMod)) +
-        score(mainAgent, getAgent(iPlusMod,jPlusMod)));
+        +   score(mainAgent, iPlusMod,jSubMod) +
+        score(mainAgent, iPlusMod,jMod) +
+        score(mainAgent, iPlusMod,jPlusMod));
+}
+
+function sumOfNeighborsNoLoop(i,j){
+    let mainAgent = getAgent(i,j);
+    return(
+        score(mainAgent, i-1,j-1) +
+        score(mainAgent, i-1,j) +
+        score(mainAgent, i-1,j+1)
+
+        +   score(mainAgent, i,j-1) +
+        score(mainAgent, i,j+1)
+
+        +   score(mainAgent, i+1,j-1) +
+        score(mainAgent, i+1,j) +
+        score(mainAgent, i+1,j+1));
 }
 
 //Updates the scoreArray for all cells
 function updateScores() {
     for (let i = 0; i < rowSlider.value; i++) {
         for (let j = 0; j < colSlider.value; j++) {
-            scoreArray[i][j] = sumOfNeighbors(i,j);
+            if (loopWalls){
+                scoreArray[i][j] = sumOfNeighbors(i,j);
+            }
+            else{
+                scoreArray[i][j] = sumOfNeighborsNoLoop(i,j);
+            }
         }
     }
 }
@@ -481,7 +528,12 @@ function updateGameArray() {
     //Imitation dynamics
     for (let i = 0; i < rowSlider.value; i++) {
         for (let j = 0; j < colSlider.value; j++) {
-            tempGameArray[i][j] = imitateNeighbors(i,j);
+            if (loopWalls){
+                tempGameArray[i][j] = imitateNeighbors(i,j);
+            }
+            else{
+                tempGameArray[i][j] = noLoopImitate(i,j);
+            }
         }
     }
     //Copying the result onto the gameArray
@@ -498,7 +550,7 @@ function imitateNeighbors(i, j) {
     let rowMod = Number(rowSlider.value);
     let colMod = Number(colSlider.value);
 
-    let scoreMax = -10;
+    let scoreMax = -100;
     let returnAgent = getAgent(i, j);
 
     let bestAgents = [];
@@ -526,11 +578,56 @@ function imitateNeighbors(i, j) {
             }
         }
     }
+    return evaluateBestAgents(bestAgents, i, j);
+}
+
+function noLoopImitate(i,j) {
+    let scoreMax = -100;
+    let returnAgent = getAgent(i, j);
+    let bestAgents = [];
+    for (let d = -1; d <= 1; d++) {
+        for (let e = -1; e <= 1; e++) {
+            if (d === 0 && e === 0) {
+                continue;
+            }
+            let iTemp = i + d;
+            let jTemp = j + e;
+            if (iTemp >= rowSlider.value || jTemp >= colSlider.value || iTemp < 0 || jTemp < 0) continue;
+
+            if (scoreArray[iTemp][jTemp] > scoreMax) {
+                scoreMax = scoreArray[iTemp][jTemp];
+                returnAgent = getAgent(iTemp, jTemp);
+                bestAgents = [getAgent(iTemp,jTemp)];
+            } else if (scoreArray[iTemp][jTemp] === scoreMax) {
+                bestAgents.push(getAgent(iTemp, jTemp));
+            }
+        }
+    }
+    if (getAgent(i,j) === "") {
+        for (let a of bestAgents){
+            if (a!=="") return a;
+        }
+    }
+    return evaluateBestAgents(bestAgents, i, j);
+}
+
+function evaluateBestAgents(bestAgents, i, j){
     if (bestAgents.length === 0) {
         return getAgent(i, j);
     }
-        return bestAgents[Math.floor(Math.random() * bestAgents.length)];
-
+    if (bestAgents.length === 1) {
+        return bestAgents[0];
+    }
+    if (bestAgents.length === 8) {
+        return bestAgents[0];
+    }
+    //If there's a tie, go against the status quo. If that's not possible (all agents are the same), stick with it.
+    for (let a of bestAgents){
+        if (a !== getAgent(i,j)){
+            return a;
+        }
+    }
+    return getAgent(i,j);
 }
 
 //Advances the game state by one timestep
@@ -542,12 +639,10 @@ function advanceGameState(){
 //Function for advancing the game state on a loop
 function updateInterval(speed) {
     console.log("activated");
-    console.log(running);
     if (running) {
         // Only start if an interval isn't already running
         if (intervalId == null) {
             intervalId = setInterval(advanceGameState, (1000/speed)); // Runs every 1000ms
-            console.log(intervalId);
         }
     } else {
         clearInterval(intervalId);

@@ -87,6 +87,23 @@ body {
     transform: translate(-50%);
 }
 
+#loopButton {
+    user-select: none;
+    position: absolute;
+    border: 3px solid black;
+    width: 100px;
+    padding: 10px;
+    background-color: white;
+    justify-content: center;
+    text-align: center;
+    left: 75%;
+    top:100px;
+    transform: translate(-50%);
+}
+#loopButton:hover {
+    cursor: pointer;
+}
+
 #advanceButton {
     user-select: none;
     position: absolute;
