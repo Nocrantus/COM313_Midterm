@@ -27,7 +27,6 @@ let scoreArray = [
 ]
 
 let costOfA = 1/16; //Must be less than 1/8
-let costOfE = 1/16;
 
 //Initialize grid container
 let gridContainer = document.getElementById('gridContainer');
@@ -67,34 +66,6 @@ hooliganButton.addEventListener("click", () => {
     hooliganButton.style.setProperty("background-color","#d3d3d3");
 });
 
-//Initialize the random distribution buttons
-let button1 = document.getElementById("2575Button");
-let button2 = document.getElementById("5050Button");
-let button3 = document.getElementById("7525Button");
-button1.style.setProperty("background-color","#FFFFFF");
-button2.style.setProperty("background-color","#FFFFFF");
-button3.style.setProperty("background-color","#FFFFFF");
-
-//Event listeners for the random distribution buttons
-button1.addEventListener("click", () => {
-    randomizeGameArray(25);
-    updateCells();
-    randomSliderValue.textContent = "25";
-    randomSlider.value = 25;
-});
-button2.addEventListener("click", () => {
-    randomizeGameArray(50);
-    updateCells();
-    randomSliderValue.textContent = "50";
-    randomSlider.value = 50;
-});
-button3.addEventListener("click", () => {
-    randomizeGameArray(75);
-    updateCells();
-    randomSliderValue.textContent = "75";
-    randomSlider.value = 75;
-});
-
 //logic for dealing with slider changes
 let startRowSlider = 10;
 let startColSlider = 10;
@@ -106,6 +77,7 @@ let endColSlider = 10;
 //var rowSlider is the document object of the slider
 let rowSliderValue = document.querySelector("#rowValue");
 let rowSlider = document.querySelector("#rowSlider");
+rowSlider.value = 10;
 rowSliderValue.textContent = rowSlider.value;
 
 //Initialize the col slider
@@ -113,6 +85,7 @@ rowSliderValue.textContent = rowSlider.value;
 //var colSlider is the document object of the slider
 let colSliderValue = document.querySelector("#colValue");
 let colSlider = document.querySelector("#colSlider");
+colSlider.value = 10;
 colSliderValue.textContent = colSlider.value;
 
 //Event listener for updating the row slider
@@ -142,23 +115,52 @@ speedSlider.addEventListener("input", (event) => {
     updateInterval(speedValue);
 });
 
-//Slider for generating a random grid
-let randomSliderValue = document.querySelector("#randomValue");
-let randomSlider = document.querySelector("#randomSlider");
-randomSliderValue.textContent = randomSlider.value;
+//Sliders for generating a random grid
+let altruistSliderValue = document.querySelector("#altruistValue");
+let egoistSliderValue = document.querySelector("#egoistValue");
+let hooliganSliderValue = document.querySelector("#hooliganValue");
+let altruistSlider = document.querySelector("#altruistSlider");
+let egoistSlider = document.querySelector("#egoistSlider");
+let hooliganSlider = document.querySelector("#hooliganSlider");
+altruistSliderValue.textContent = altruistSlider.value;
+egoistSliderValue.textContent = egoistSlider.value;
+hooliganSliderValue.textContent = hooliganSlider.value;
+let sliderSelector = 0; //0 for altruist, 1 for egoist, 2 for hooligan
+function updateSliders() {
+    let aValue = Number(altruistSlider.value);
+    let eValue = Number(egoistSlider.value);
+    let hValue = Number(hooliganSlider.value);
 
+    let total = aValue + eValue + hValue;
+    console.log(total);
+    if (total !== 100) {
+        altruistSlider.value = Math.floor((aValue / total) * 100);
+        egoistSlider.value = Math.floor((eValue / total) * 100);
+        hooliganSlider.value = 100 - Number(altruistSlider.value) - Number(egoistSlider.value);
+    }
+    altruistSliderValue.textContent = altruistSlider.value.toString();
+    egoistSliderValue.textContent = egoistSlider.value.toString();
+    hooliganSliderValue.textContent = hooliganSlider.value.toString();
+}
 //Event listener for updating the random slider
-randomSlider.addEventListener("input", (event) => {
-    randomSliderValue.textContent = event.target.value;
-    randomizeGameArray(randomSlider.value);
-    updateCells();
+altruistSlider.addEventListener("input", () => {
+    sliderSelector = 0;
+    updateSliders();
+});
+egoistSlider.addEventListener("input", () => {
+    sliderSelector = 1;
+    updateSliders();
+});
+hooliganSlider.addEventListener("input", () => {
+    sliderSelector = 2;
+    updateSliders();
 });
 
 //Button to generate a random grid given the slider value
 let generateButton = document.getElementById("generateButton");
 generateButton.style.setProperty("background-color","#FFFFFF");
 generateButton.addEventListener("click", () => {
-    randomizeGameArray(randomSlider.value);
+    randomizeGameArray(altruistSlider.value,egoistSlider.value,hooliganSlider.value);
     updateCells();
 });
 
@@ -389,7 +391,7 @@ function score(mainAgent, i,j) {
     let scoreTable = [
         /*Empty*/   [-10,-10,-10,-10],
         /*Altruist*/[0,1-costOfA,-costOfA,-costOfA],
-        /*Egoist*/  [0,1,0,-costOfE],
+        /*Egoist*/  [0,1,0,-1],
         /*Hooligan*/[0,1,1,-1]
     ];
     if (i < 0 || i >= Number(rowSlider.value)) return 0;
@@ -502,6 +504,7 @@ function updateScores() {
             }
         }
     }
+    console.log(scoreArray);
 }
 
 //Given the score array, update the gameArray using imitation dynamics
@@ -650,15 +653,18 @@ function updateInterval(speed) {
     }
 }
 //Function for randomizing the gameArray given an altruistWeight (% of altruists
-function randomizeGameArray(altruistWeight) {
+function randomizeGameArray(aWeight, eWeight) {
     for (let i = 0; i < rowSlider.value; i++) {
         for (let j = 0; j < colSlider.value; j++) {
             let randomValue = Math.floor(Math.random()*100);
-            if (randomValue < altruistWeight) {
-                gameArray[i][j] = "A";
+            if (randomValue < aWeight) {
+                gameArray[i][j]="A";
+            }
+            else if (randomValue < Number(aWeight) + Number(eWeight)) {
+                gameArray[i][j]="E";
             }
             else {
-                gameArray[i][j] = "E";
+                gameArray[i][j]="H";
             }
         }
     }

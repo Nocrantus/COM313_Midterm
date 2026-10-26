@@ -154,51 +154,35 @@ body {
     cursor: pointer;
 }
 
-#randomContainer {
+#randomSliderDiv{
     position: absolute;
     border: 3px solid black;
-    display: grid;
-    grid-template-columns: 100px 100px 100px;
-    width: 300px;
+    width: 350px;
     padding: 10px;
     justify-content: center;
     text-align: center;
     left: 50%;
-    bottom: 0;
+    bottom:0;
     transform: translate(-50%);
 }
-#randomSliderDiv {
-    position: absolute;
-    border: 3px solid black;
-    display: grid;
-    grid-template-columns: 100px 100px 100px;
-    width: 300px;
-    padding: 10px;
+#randomSliders {
     justify-content: center;
-    text-align: center;
-    left: 50%;
-    bottom: 100px;
-    transform: translate(-50%);
+    display: grid;
+    grid-template-rows: 30px 30px 30px;
+    grid-template-columns: 120px 120px;
 }
 
-#matrixGridDiv {
-    display:grid;
-    grid-template-columns: 85px 85px 85px;
-    grid-template-rows: 40px 40px 40px;
-    position: absolute;
-    right:205px;
-    bottom:20px;
-    justify-content: center;
-}
-.matrix{
-    width:90px;
-    height:40px;
-    border: 1px solid black;
-    text-align: center;
-    background-color: white;
+#generateButton{
+    position: relative;
+    left:50%;
+    transform: translate(-50%);
     user-select: none;
+    border: 1px solid black;
     padding: 3px;
+    margin-bottom: 10px;
+    background-color: white;
+    width: 100px;
 }
-.matrix:hover{
+#generateButton:hover {
     cursor: pointer;
 }

@@ -81,31 +81,44 @@
             <p>Speed: <strong><span id="speedValue"></span></strong></p>
         </div>
 
-        <div id="randomContainer">
-            <div id="2575Button" class="agentButton">
-                <p>25-75 Split</p>
-            </div>
-            <div id="5050Button" class="agentButton">
-                <p>50-50 Split</p>
-            </div>
-            <div id="7525Button" class="agentButton">
-                <p>75-25 Split</p>
-            </div>
-        </div>
-
         <div id="randomSliderDiv">
+            <div id="generateButton">Generate</div>
+            <div id = "randomSliders">
             <input
                     type="range"
-                    id="randomSlider"
-                    name="randomSlider"
+                    id="altruistSlider"
+                    name="altruistSlider"
                     value="50"
                     min="0"
                     max="100"
                     step="1"
+                    class = "sliders"
             />
-            <label for="randomSlider"><span id="randomValue"></span> % altruists</label>
-            <div id="generateButton" class="agentButton">
-                Generate
+            <label for="altruistSlider"><span id="altruistValue"></span> % altruists</label>
+
+            <input
+                    type="range"
+                    id="egoistSlider"
+                    name="egoistSlider"
+                    value="50"
+                    min="0"
+                    max="100"
+                    step="1"
+                    class = "sliders"
+            />
+            <label for="egoistSlider"><span id="egoistValue"></span> % egoists</label>
+
+            <input
+                    type="range"
+                    id="hooliganSlider"
+                    name="hooliganSlider"
+                    value="0"
+                    min="0"
+                    max="100"
+                    step="1"
+                    class = "sliders"
+            />
+            <label for="hooliganSlider"><span id="hooliganValue"></span> % hooligans</label>
             </div>
         </div>
     </div>
