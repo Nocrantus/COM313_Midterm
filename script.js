@@ -66,6 +66,23 @@ hooliganButton.addEventListener("click", () => {
     hooliganButton.style.setProperty("background-color","#d3d3d3");
 });
 
+let body = document.querySelector("body");
+body.addEventListener("keydown", (e) => {
+    if (e.key === "a") updateID = "A";
+    if (e.key === "e") updateID = "E";
+    if (e.key === "h") updateID = "H";
+    if (e.code === "Space") {
+        running = !running;
+        clearInterval(intervalId);
+        intervalId = null;
+        updateInterval(5);
+    }
+    if (e.code === "Enter") {
+        advanceGameState();
+        updateCells();
+    }
+});
+
 //logic for dealing with slider changes
 let startRowSlider = 10;
 let startColSlider = 10;
